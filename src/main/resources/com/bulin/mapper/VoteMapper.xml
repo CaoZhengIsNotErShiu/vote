@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bulin.mapper.VoteMapper">
+
+    <resultMap id="voteTitleResultMap" type="com.bulin.model.VoteTitle">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="DATE"/>
+        <result property="endTime" column="end_time" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="voteOptionResultMap" type="com.bulin.model.VoteOption">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="option" column="option" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="poll" column="poll" jdbcType="INTEGER"/>
+        <result property="titleId" column="title_id" jdbcType="INTEGER"/>
+        <result property="image" column="image" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="voteOpenIdResultMap" type="com.bulin.model.VoteOpenId">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="openId" column="open_id" jdbcType="VARCHAR"/>
+        <result property="titleId" column="title_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="queryVoteOptionByTitleId" parameterType="java.lang.Integer" resultMap="voteOptionResultMap">
+        SELECT * FROM vote_option WHERE title_id=#{titleId}
+    </select>
+
+    <select id="queryVoteTitle" resultMap="voteTitleResultMap">
+        SELECT * FROM vote_title
+    </select>
+
+    <update id="addPoll">
+        UPDATE vote_option SET poll=poll+1 WHERE id=#{id}
+    </update>
+
+    <select id="queryVoteTitleByOptionId" parameterType="java.lang.Integer" resultMap="voteTitleResultMap">
+        SELECT * FROM vote_title WHERE id=(SELECT title_id FROM vote_option where id=#{id})
+    </select>
+
+    <select id="queryVoteOpenIdByOpenIdAndTitleId" resultMap="voteOpenIdResultMap">
+        SELECT * FROM vote_open_id WHERE title_id=#{id} AND open_id=#{openId}
+    </select>
+
+    <insert id="addVoteOpenId" >
+        INSERT INTO vote_open_id(title_id,open_id) VALUES(#{id},#{openId})
+    </insert>
+</mapper>
